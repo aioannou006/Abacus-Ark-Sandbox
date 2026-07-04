@@ -1,0 +1,265 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Occupancy Break-Even Calculator</title>
+<style>
+  :root {
+    --bg: #f4f6f9;
+    --card: #ffffff;
+    --ink: #1c2430;
+    --muted: #6b7688;
+    --line: #e2e7ee;
+    --accent: #2563eb;
+    --accent-ink: #1d4ed8;
+    --good: #0f9d58;
+    --warn: #d93025;
+    --field: #f8fafc;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    padding: 24px 16px 48px;
+  }
+  .wrap { max-width: 480px; margin: 0 auto; }
+  header { text-align: center; margin-bottom: 20px; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  header p { margin: 0; color: var(--muted); font-size: 14px; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: 0 1px 3px rgba(20,30,50,.05);
+  }
+  .field { margin-bottom: 16px; }
+  .field:last-child { margin-bottom: 0; }
+  label { display: block; font-weight: 600; font-size: 14px; margin-bottom: 6px; }
+  label .hint { display: block; font-weight: 400; color: var(--muted); font-size: 12px; margin-top: 2px; }
+  .input-wrap { position: relative; }
+  .input-wrap .prefix {
+    position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+    color: var(--muted); font-size: 15px; pointer-events: none;
+  }
+  input[type="number"] {
+    width: 100%;
+    padding: 12px 12px;
+    font-size: 16px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--field);
+    color: var(--ink);
+    -moz-appearance: textfield;
+  }
+  input.has-prefix { padding-left: 26px; }
+  input[type="number"]:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(37,99,235,.15); }
+
+  .slider-row { display: flex; align-items: center; gap: 12px; margin-top: 10px; }
+  output#feeOut {
+    min-width: 68px; text-align: right; font-weight: 700; font-size: 14px;
+    color: var(--accent-ink); font-variant-numeric: tabular-nums;
+  }
+  input[type="range"] {
+    -webkit-appearance: none; appearance: none;
+    flex: 1; height: 6px; border-radius: 999px; background: var(--line);
+    margin: 0; cursor: pointer;
+  }
+  input[type="range"]:focus { outline: none; }
+  input[type="range"]:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 4px rgba(37,99,235,.2); }
+  input[type="range"]:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 4px rgba(37,99,235,.2); }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none;
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--accent); border: 3px solid #fff;
+    box-shadow: 0 1px 4px rgba(20,30,50,.25); margin-top: -8px;
+  }
+  input[type="range"]::-moz-range-thumb {
+    width: 18px; height: 18px; border-radius: 50%;
+    background: var(--accent); border: 3px solid #fff;
+    box-shadow: 0 1px 4px rgba(20,30,50,.25);
+  }
+
+  .result {
+    margin-top: 20px;
+    border-radius: 14px;
+    padding: 24px 20px;
+    text-align: center;
+    background: linear-gradient(160deg, #eef4ff, #e6efff);
+    border: 1px solid #d4e0fb;
+  }
+  .result .cap { font-size: 13px; color: var(--accent-ink); font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
+  .result .big { font-size: 52px; font-weight: 800; line-height: 1.1; margin: 6px 0; color: var(--accent-ink); }
+  .result .sub { color: var(--muted); font-size: 14px; }
+  .result.error { background: #fdecea; border-color: #f6c9c4; }
+  .result.error .cap, .result.error .big { color: var(--warn); }
+  .result.impossible .big { font-size: 34px; }
+
+  .breakdown {
+    margin-top: 16px;
+    font-size: 14px;
+    border-top: 1px solid var(--line);
+    padding-top: 14px;
+  }
+  .breakdown .row { display: flex; justify-content: space-between; padding: 4px 0; }
+  .breakdown .row span:last-child { font-weight: 600; }
+  footer { text-align: center; margin-top: 20px; color: var(--muted); font-size: 12px; }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Occupancy Break-Even Calculator</h1>
+    <p>Find the occupancy level you need to cover your costs.</p>
+  </header>
+
+  <div class="card">
+    <div class="field">
+      <label for="places">Number of places
+        <span class="hint">Total capacity (rooms / beds / spaces)</span>
+      </label>
+      <div class="input-wrap">
+        <input id="places" type="number" min="0" step="1" inputmode="numeric" value="40">
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="fee">Weekly fee
+        <span class="hint">Charged per occupied place, per week</span>
+      </label>
+      <div class="input-wrap">
+        <span class="prefix">£</span>
+        <input id="fee" class="has-prefix" type="number" min="0" step="0.01" inputmode="decimal" value="1200">
+      </div>
+      <div class="slider-row">
+        <input id="feeSlider" type="range" min="0" max="3000" step="10" value="1200"
+               aria-label="Weekly fee slider">
+        <output id="feeOut" for="fee">£1,200</output>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="staff">Average staff cost per room
+        <span class="hint">Variable cost per occupied place, per week</span>
+      </label>
+      <div class="input-wrap">
+        <span class="prefix">£</span>
+        <input id="staff" class="has-prefix" type="number" min="0" step="0.01" inputmode="decimal" value="700">
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="fixed">Fixed site costs
+        <span class="hint">Total fixed overheads, per month</span>
+      </label>
+      <div class="input-wrap">
+        <span class="prefix">£</span>
+        <input id="fixed" class="has-prefix" type="number" min="0" step="0.01" inputmode="decimal" value="35000">
+      </div>
+    </div>
+
+    <div id="result" class="result">
+      <div class="cap">Break-even occupancy</div>
+      <div class="big" id="pct">—</div>
+      <div class="sub" id="sub"></div>
+      <div class="breakdown" id="breakdown" hidden>
+        <div class="row"><span>Places needed occupied</span><span id="placesNeeded">—</span></div>
+        <div class="row"><span>Weekly contribution per place</span><span id="contrib">—</span></div>
+        <div class="row"><span>Fixed cost per week</span><span id="weeklyFixed">—</span></div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    Assumes 52 weeks per year (≈ 4.33 weeks / month). Break-even = fixed cost ÷ contribution per place.
+  </footer>
+</div>
+
+<script>
+  var WEEKS_PER_MONTH = 52 / 12;
+  var ids = ["places", "fee", "staff", "fixed"];
+  var fmtMoney = new Intl.NumberFormat(undefined, { style: "currency", currency: "GBP", maximumFractionDigits: 0 });
+
+  function val(id) {
+    var v = parseFloat(document.getElementById(id).value);
+    return isNaN(v) ? 0 : v;
+  }
+
+  function setResult(state, big, sub) {
+    var box = document.getElementById("result");
+    box.className = "result" + (state ? " " + state : "");
+    document.getElementById("pct").textContent = big;
+    document.getElementById("sub").textContent = sub || "";
+  }
+
+  function calc() {
+    var places = val("places");
+    var fee = val("fee");
+    var staff = val("staff");
+    var fixedMonthly = val("fixed");
+
+    var breakdown = document.getElementById("breakdown");
+    breakdown.hidden = true;
+
+    var contribution = fee - staff; // weekly margin per occupied place
+    var weeklyFixed = fixedMonthly * 12 / 52;
+
+    if (places <= 0) {
+      setResult("error", "—", "Enter a number of places to begin.");
+      return;
+    }
+    if (contribution <= 0) {
+      setResult("error impossible", "Not possible",
+        "The weekly fee must be higher than the staff cost per room to ever cover fixed costs.");
+      return;
+    }
+
+    var placesNeeded = weeklyFixed / contribution;      // occupied places required
+    var occupancy = (placesNeeded / places) * 100;
+
+    // Fill breakdown
+    document.getElementById("placesNeeded").textContent =
+      Math.ceil(placesNeeded) + " of " + places;
+    document.getElementById("contrib").textContent = fmtMoney.format(contribution) + " / wk";
+    document.getElementById("weeklyFixed").textContent = fmtMoney.format(weeklyFixed) + " / wk";
+    breakdown.hidden = false;
+
+    if (occupancy > 100) {
+      setResult("warn impossible", occupancy.toFixed(1) + "%",
+        "Above full capacity — even at 100% occupancy you cannot break even. Reduce costs or raise the fee.");
+    } else {
+      var pctStr = occupancy.toFixed(1) + "%";
+      setResult("", pctStr,
+        "You need " + Math.ceil(placesNeeded) + " of " + places + " places filled to break even.");
+    }
+  }
+
+  // Two-way sync between the fee number box and its slider.
+  var feeInput = document.getElementById("fee");
+  var feeSlider = document.getElementById("feeSlider");
+  var feeOut = document.getElementById("feeOut");
+
+  function updateFeeOut() {
+    feeOut.textContent = fmtMoney.format(val("fee"));
+  }
+
+  feeSlider.addEventListener("input", function () {
+    feeInput.value = feeSlider.value;
+    updateFeeOut();
+    calc();
+  });
+
+  feeInput.addEventListener("input", function () {
+    var v = val("fee");
+    // Let the slider grow if a larger fee is typed in.
+    if (v > +feeSlider.max) feeSlider.max = Math.ceil(v / 100) * 100;
+    feeSlider.value = v;
+    updateFeeOut();
+  });
+
+  ids.forEach(function (id) {
+    document.getElementById(id).addEventListener("input", calc);
+  });
+  updateFeeOut();
+  calc();
+</script>
