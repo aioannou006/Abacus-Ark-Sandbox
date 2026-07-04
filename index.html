@@ -124,27 +124,27 @@
     </div>
 
     <div class="field">
-      <label for="fee">Weekly fee
-        <span class="hint">Charged per occupied place, per week</span>
+      <label for="fee">Monthly fee
+        <span class="hint">Charged per occupied place, per month</span>
       </label>
       <div class="input-wrap">
         <span class="prefix">£</span>
-        <input id="fee" class="has-prefix" type="number" min="0" step="0.01" inputmode="decimal" value="1200">
+        <input id="fee" class="has-prefix" type="number" min="0" step="0.01" inputmode="decimal" value="5200">
       </div>
       <div class="slider-row">
-        <input id="feeSlider" type="range" min="0" max="3000" step="10" value="1200"
-               aria-label="Weekly fee slider">
-        <output id="feeOut" for="fee">£1,200</output>
+        <input id="feeSlider" type="range" min="0" max="12000" step="50" value="5200"
+               aria-label="Monthly fee slider">
+        <output id="feeOut" for="fee">£5,200</output>
       </div>
     </div>
 
     <div class="field">
       <label for="staff">Average staff cost per room
-        <span class="hint">Variable cost per occupied place, per week</span>
+        <span class="hint">Variable cost per occupied place, per month</span>
       </label>
       <div class="input-wrap">
         <span class="prefix">£</span>
-        <input id="staff" class="has-prefix" type="number" min="0" step="0.01" inputmode="decimal" value="700">
+        <input id="staff" class="has-prefix" type="number" min="0" step="0.01" inputmode="decimal" value="3000">
       </div>
     </div>
 
@@ -164,19 +164,18 @@
       <div class="sub" id="sub"></div>
       <div class="breakdown" id="breakdown" hidden>
         <div class="row"><span>Places needed occupied</span><span id="placesNeeded">—</span></div>
-        <div class="row"><span>Weekly contribution per place</span><span id="contrib">—</span></div>
-        <div class="row"><span>Fixed cost per week</span><span id="weeklyFixed">—</span></div>
+        <div class="row"><span>Monthly contribution per place</span><span id="contrib">—</span></div>
+        <div class="row"><span>Fixed cost per month</span><span id="monthlyFixed">—</span></div>
       </div>
     </div>
   </div>
 
   <footer>
-    Assumes 52 weeks per year (≈ 4.33 weeks / month). Break-even = fixed cost ÷ contribution per place.
+    All figures are monthly. Break-even = fixed cost ÷ contribution per place.
   </footer>
 </div>
 
 <script>
-  var WEEKS_PER_MONTH = 52 / 12;
   var ids = ["places", "fee", "staff", "fixed"];
   var fmtMoney = new Intl.NumberFormat(undefined, { style: "currency", currency: "GBP", maximumFractionDigits: 0 });
 
@@ -201,8 +200,7 @@
     var breakdown = document.getElementById("breakdown");
     breakdown.hidden = true;
 
-    var contribution = fee - staff; // weekly margin per occupied place
-    var weeklyFixed = fixedMonthly * 12 / 52;
+    var contribution = fee - staff; // monthly margin per occupied place
 
     if (places <= 0) {
       setResult("error", "—", "Enter a number of places to begin.");
@@ -210,18 +208,18 @@
     }
     if (contribution <= 0) {
       setResult("error impossible", "Not possible",
-        "The weekly fee must be higher than the staff cost per room to ever cover fixed costs.");
+        "The monthly fee must be higher than the staff cost per room to ever cover fixed costs.");
       return;
     }
 
-    var placesNeeded = weeklyFixed / contribution;      // occupied places required
+    var placesNeeded = fixedMonthly / contribution;     // occupied places required
     var occupancy = (placesNeeded / places) * 100;
 
     // Fill breakdown
     document.getElementById("placesNeeded").textContent =
       Math.ceil(placesNeeded) + " of " + places;
-    document.getElementById("contrib").textContent = fmtMoney.format(contribution) + " / wk";
-    document.getElementById("weeklyFixed").textContent = fmtMoney.format(weeklyFixed) + " / wk";
+    document.getElementById("contrib").textContent = fmtMoney.format(contribution) + " / mo";
+    document.getElementById("monthlyFixed").textContent = fmtMoney.format(fixedMonthly) + " / mo";
     breakdown.hidden = false;
 
     if (occupancy > 100) {
