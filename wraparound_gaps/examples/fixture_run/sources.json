@@ -1,0 +1,7 @@
+{
+  "run_date": "2026-07-14",
+  "files": {
+    "GIAS": "fixture: tests/fixtures/gias_sample.csv",
+    "Ofsted": "fixture: tests/fixtures/ofsted_sample.csv"
+  }
+}

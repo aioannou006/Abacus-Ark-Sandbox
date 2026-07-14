@@ -1,0 +1,11 @@
+urn,name,borough,postcode,ofsted_match,ofsted_provider,ofsted_registration
+100001,Riverside Primary School,Wandsworth,SW18 2PQ,exact,Riverside After School Club,CCR-VCR
+100002,St Hilda's CofE Primary School,Merton,SM4 5JD,none,,
+100003,Oakfield Junior and Infant School,Lambeth,SW9 7AB,name,Oakfield Kids Club,CCR
+100004,Greenway Primary School,Richmond upon Thames,TW9 1AA,none,,
+100005,Hillcrest Primary School,Kingston upon Thames,KT1 2BB,none,,
+100006,Marsh Lane Primary School,Wandsworth,SW11 3CC,none,,
+100007,Fernbank Primary School,Merton,CR4 4DD,none,,
+100008,Silver Birch Primary,Lambeth,SW2 5EE,none,,
+100013,Cedar House School,Richmond upon Thames,TW10 6AB,fuzzy,Cedar Road Out of School Club,CCR
+100014,Kingfisher Primary,Kingston upon Thames,KT2 6FF,none,,

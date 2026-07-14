@@ -1,0 +1,11 @@
+urn,name,borough,website,website_class,evidence_term,evidence_url,evidence_context,pages_fetched,fetch_note
+100001,Riverside Primary School,Wandsworth,https://school1.example.sch.uk,CONFIRMED_CLUB,after school club,https://school1.example.sch.uk/clubs,clubs our after school club runs from 3.15pm to 6.00pm every day in the main hall. book,2,
+100002,St Hilda's CofE Primary School,Merton,school2.example.sch.uk,CONFIRMED_CLUB,wraparound,http://school2.example.sch.uk," and our pta organises events throughout the year. we offer wraparound care from 8am to 6pm for all pupils, run by school staff.",1,
+100003,Oakfield Junior and Infant School,Lambeth,https://school3.example.sch.uk,NO_EVIDENCE,,,,8,
+100004,Greenway Primary School,Richmond upon Thames,https://school4.example.sch.uk,NO_EVIDENCE,,,,8,
+100005,Hillcrest Primary School,Kingston upon Thames,https://school5.example.sch.uk,BREAKFAST_ONLY,breakfast club,https://school5.example.sch.uk," term and our pta organises events throughout the year. our breakfast club opens at 7.45am each morning, £2 per session.",8,
+100006,Marsh Lane Primary School,Wandsworth,https://school6.example.sch.uk,UNVERIFIABLE,,,,0,homepage fetch failed: connection refused (fixture)
+100007,Fernbank Primary School,Merton,,UNVERIFIABLE,,,,0,no website in GIAS
+100008,Silver Birch Primary,Lambeth,https://school8.example.sch.uk,NO_EVIDENCE,,,,8,
+100013,Cedar House School,Richmond upon Thames,https://school13.example.sch.uk,UNVERIFIABLE,,,,1,homepage has almost no static text (JS-only site?)
+100014,Kingfisher Primary,Kingston upon Thames,https://school14.example.sch.uk,CONFIRMED_CLUB,fit for sport,https://school14.example.sch.uk,d our pta organises events throughout the year. our partner fit for sport runs daily activity sessions on site until 6pm.,1,

@@ -1,0 +1,11 @@
+urn,name,la_code,borough,type,phase,low_age,high_age,status,street,postcode,website,phone,nursery_provision
+100001,Riverside Primary School,212,Wandsworth,Community school,Primary,4,11,Open,1 River Way,SW18 2PQ,https://school1.example.sch.uk,020 7000 0001,Has Nursery Classes
+100002,St Hilda's CofE Primary School,315,Merton,Voluntary aided school,Primary,4,11,Open,2 Hilda Street,SM4 5JD,school2.example.sch.uk,020 7000 0002,No Nursery Classes
+100003,Oakfield Junior and Infant School,208,Lambeth,Community school,Primary,3,11,Open,3 Oak Road,SW9 7AB,https://school3.example.sch.uk,020 7000 0003,Has Nursery Classes
+100004,Greenway Primary School,318,Richmond upon Thames,Academy converter,Primary,4,11,Open,4 Green Way,TW9 1AA,https://school4.example.sch.uk,020 7000 0004,No Nursery Classes
+100005,Hillcrest Primary School,314,Kingston upon Thames,Community school,Primary,5,11,Open,5 Hill Road,KT1 2BB,https://school5.example.sch.uk,020 7000 0005,No Nursery Classes
+100006,Marsh Lane Primary School,212,Wandsworth,Community school,Primary,4,11,Open,6 Marsh Lane,SW11 3CC,https://school6.example.sch.uk,020 7000 0006,No Nursery Classes
+100007,Fernbank Primary School,315,Merton,Community school,Primary,4,11,Open,7 Fern Road,CR4 4DD,,020 7000 0007,No Nursery Classes
+100008,Silver Birch Primary,208,Lambeth,Free schools,Primary,4,11,Open,8 Birch Avenue,SW2 5EE,https://school8.example.sch.uk,020 7000 0008,No Nursery Classes
+100013,Cedar House School,318,Richmond upon Thames,Other independent school,Not applicable,4,11,Open,12 Cedar Road,TW10 6AB,https://school13.example.sch.uk,020 7000 0013,No Nursery Classes
+100014,Kingfisher Primary,314,Kingston upon Thames,Other independent school,Not applicable,4,11,Open,14 King Street,KT2 6FF,https://school14.example.sch.uk,020 7000 0014,No Nursery Classes

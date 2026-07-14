@@ -1,0 +1,24 @@
+2026-07-14 07:08:11,342 INFO === Step 1: build school universe ===
+2026-07-14 07:08:11,343 INFO universe: 10 schools in scope (sanity range 250-400)
+2026-07-14 07:08:11,344 INFO wrote examples/run_2026-07-14_fixture/schools_universe.csv (10 rows)
+2026-07-14 07:08:11,344 INFO === Step 2: Ofsted register match ===
+2026-07-14 07:08:11,344 INFO Ofsted providers in scope after filtering: 3
+2026-07-14 07:08:11,345 INFO Ofsted matches: 3/10 schools ({'exact': 1, 'fuzzy': 1, 'name': 1, 'none': 7})
+2026-07-14 07:08:11,345 INFO wrote examples/run_2026-07-14_fixture/ofsted_matches.csv (10 rows)
+2026-07-14 07:08:11,345 INFO === Step 3: website evidence sweep ===
+2026-07-14 07:08:11,432 INFO websweep progress: 10/10
+2026-07-14 07:08:11,432 INFO websweep classes: {'CONFIRMED_CLUB': 3, 'NO_EVIDENCE': 3, 'BREAKFAST_ONLY': 1, 'UNVERIFIABLE': 3}
+2026-07-14 07:08:11,432 INFO wrote examples/run_2026-07-14_fixture/website_evidence.csv (10 rows)
+2026-07-14 07:08:11,432 INFO === Step 4: scoring and shortlist ===
+2026-07-14 07:08:11,433 INFO wrote examples/run_2026-07-14_fixture/confirmed_provision.csv (5 rows)
+2026-07-14 07:08:11,433 INFO wrote examples/run_2026-07-14_fixture/probable_gaps.csv (3 rows)
+2026-07-14 07:08:11,433 INFO wrote examples/run_2026-07-14_fixture/manual_check.csv (2 rows)
+2026-07-14 07:08:11,433 INFO scoring: 5 confirmed, 3 shortlisted, 2 manual-check
+2026-07-14 07:08:11,433 INFO === Step 5: FIS cross-check ===
+2026-07-14 07:08:11,434 INFO FIS cross-check upgraded 1 schools to confirmed
+2026-07-14 07:08:11,434 INFO wrote examples/run_2026-07-14_fixture/confirmed_provision.csv (6 rows)
+2026-07-14 07:08:11,434 INFO wrote examples/run_2026-07-14_fixture/probable_gaps.csv (2 rows)
+2026-07-14 07:08:11,435 INFO wrote examples/run_2026-07-14_fixture/manual_check.csv (2 rows)
+2026-07-14 07:08:11,435 INFO === Step 6: summary report ===
+2026-07-14 07:08:11,436 INFO wrote examples/run_2026-07-14_fixture/summary.md
+2026-07-14 07:08:11,436 INFO done — outputs in examples/run_2026-07-14_fixture
