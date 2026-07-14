@@ -1,0 +1,16 @@
+URN,LA (code),LA (name),EstablishmentName,TypeOfEstablishment (name),EstablishmentStatus (name),PhaseOfEducation (name),StatutoryLowAge,StatutoryHighAge,Street,Postcode,SchoolWebsite,TelephoneNum,NurseryProvision (name)
+100001,212,Wandsworth,Riverside Primary School,Community school,Open,Primary,4,11,1 River Way,SW18 2PQ,https://school1.example.sch.uk,020 7000 0001,Has Nursery Classes
+100001,212,Wandsworth,Riverside Primary School,Community school,Open,Primary,4,11,1 River Way,SW18 2PQ,https://school1.example.sch.uk,020 7000 0001,Has Nursery Classes
+100002,315,Merton,St Hilda's CofE Primary School,Voluntary aided school,Open,Primary,4,11,2 Hilda Street,SM4 5JD,school2.example.sch.uk,020 7000 0002,No Nursery Classes
+100003,208,Lambeth,Oakfield Junior and Infant School,Community school,Open,Primary,3,11,3 Oak Road,SW9 7AB,https://school3.example.sch.uk,020 7000 0003,Has Nursery Classes
+100004,318,Richmond upon Thames,Greenway Primary School,Academy converter,Open,Primary,4,11,4 Green Way,TW9 1AA,https://school4.example.sch.uk,020 7000 0004,No Nursery Classes
+100005,314,Kingston upon Thames,Hillcrest Primary School,Community school,Open,Primary,5,11,5 Hill Road,KT1 2BB,https://school5.example.sch.uk,020 7000 0005,No Nursery Classes
+100006,212,Wandsworth,Marsh Lane Primary School,Community school,Open,Primary,4,11,6 Marsh Lane,SW11 3CC,https://school6.example.sch.uk,020 7000 0006,No Nursery Classes
+100007,315,Merton,Fernbank Primary School,Community school,Open,Primary,4,11,7 Fern Road,CR4 4DD,,020 7000 0007,No Nursery Classes
+100008,208,Lambeth,Silver Birch Primary,Free schools,Open,Primary,4,11,8 Birch Avenue,SW2 5EE,https://school8.example.sch.uk,020 7000 0008,No Nursery Classes
+100009,212,Wandsworth,Old Closed School,Community school,Closed,Primary,4,11,9 Old Road,SW18 9ZZ,,,No Nursery Classes
+100010,315,Merton,Little Ducks Nursery,Local authority nursery school,Open,Nursery,2,4,10 Duck Lane,SM4 9YY,,,Has Nursery Classes
+100011,208,Lambeth,Broadwater Secondary Academy,Academy converter,Open,Secondary,11,16,11 Broad Street,SW9 8XX,,,No Nursery Classes
+100012,306,Croydon,Out Of Scope Primary School,Community school,Open,Primary,4,11,12 Away Road,CR0 1AA,,,No Nursery Classes
+100013,318,Richmond upon Thames,Cedar House School,Other independent school,Open,Not applicable,4,11,12 Cedar Road,TW10 6AB,https://school13.example.sch.uk,020 7000 0013,No Nursery Classes
+100014,314,Kingston upon Thames,Kingfisher Primary,Other independent school,Open,Not applicable,4,11,14 King Street,KT2 6FF,https://school14.example.sch.uk,020 7000 0014,No Nursery Classes
