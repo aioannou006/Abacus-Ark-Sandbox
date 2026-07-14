@@ -9,6 +9,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from pipeline.config import CONFIG
+from pipeline.step2_ofsted import _pick_data_url, load_ofsted_rows
 from pipeline.step3_websweep import find_signals
 from pipeline.util import (name_tokens, norm_postcode, norm_street,
                            postcode_district, resolve_column)
@@ -59,6 +60,64 @@ class TestSignals(unittest.TestCase):
 
     def test_no_signal(self):
         self.assertEqual(find_signals("welcome to our school", CONFIG)[0], "")
+
+
+_ODS_CONTENT_XML = """<?xml version="1.0" encoding="UTF-8"?>
+<office:document-content
+  xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0"
+  xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0"
+  xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0">
+ <office:body><office:spreadsheet>
+  <table:table table:name="Notes">
+   <table:table-row><table:table-cell><text:p>About this release</text:p>
+   </table:table-cell></table:table-row>
+  </table:table>
+  <table:table table:name="Data">
+   <table:table-row><table:table-cell table:number-columns-repeated="3">
+    <text:p>Childcare providers as at 31 December 2025</text:p>
+   </table:table-cell></table:table-row>
+   <table:table-row>
+    <table:table-cell><text:p>Provider name</text:p></table:table-cell>
+    <table:table-cell><text:p>Provider type</text:p></table:table-cell>
+    <table:table-cell><text:p>Postcode</text:p></table:table-cell>
+   </table:table-row>
+   <table:table-row>
+    <table:table-cell><text:p>Riverside After School Club</text:p></table:table-cell>
+    <table:table-cell><text:p>Childcare on non-domestic premises</text:p></table:table-cell>
+    <table:table-cell><text:p>SW18 2PQ</text:p></table:table-cell>
+    <table:table-cell table:number-columns-repeated="1000"/>
+   </table:table-row>
+  </table:table>
+ </office:spreadsheet></office:body>
+</office:document-content>"""
+
+
+class TestOfstedLoader(unittest.TestCase):
+    def test_pick_data_url_prefers_csv_then_most_recent(self):
+        ods = "https://assets.example/a/Childcare_data.ods"
+        csv_other = "https://assets.example/b/Childcare_summary.csv"
+        csv_recent = ("https://assets.example/c/Childcare_most_recent_"
+                      "inspections_data.csv")
+        self.assertEqual(_pick_data_url([ods, csv_other, csv_recent]),
+                         csv_recent)
+        self.assertEqual(_pick_data_url([ods, csv_other]), csv_other)
+        self.assertEqual(_pick_data_url([ods]), ods)
+
+    def test_load_ods(self):
+        import zipfile
+
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "sample.ods"
+            with zipfile.ZipFile(path, "w") as z:
+                z.writestr("mimetype",
+                           "application/vnd.oasis.opendocument.spreadsheet")
+                z.writestr("content.xml", _ODS_CONTENT_XML)
+            rows = load_ofsted_rows(path)
+        # Title row and Notes sheet skipped; header found by content.
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["Provider name"],
+                         "Riverside After School Club")
+        self.assertEqual(rows[0]["Postcode"], "SW18 2PQ")
 
 
 def _read(path: Path) -> list[dict]:
