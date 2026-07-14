@@ -42,8 +42,22 @@ def find_latest_ofsted_url(cfg: dict, fetcher) -> str:
             "No childcare data-file links found on the Ofsted dataset page; "
             "page layout may have changed — set ofsted_data_url in config."
         )
-    # gov.uk lists the newest attachment first.
-    return childcare[0]
+    return _pick_data_url(childcare)
+
+
+def _pick_data_url(childcare_links: list[str]) -> str:
+    """Prefer CSV over ODS/XLSX, and the 'most recent inspections' file.
+
+    gov.uk lists the newest attachments first, so within each preference
+    tier the first link wins. CSV is preferred because the ODS/XLSX
+    releases bury the data under title rows and notes sheets.
+    """
+    def rank(url: str) -> tuple[int, int]:
+        u = url.lower()
+        return (0 if u.endswith(".csv") else 1,
+                0 if "most_recent" in u else 1)
+
+    return min(childcare_links, key=lambda u: (rank(u), childcare_links.index(u)))
 
 
 def download_ofsted(cfg: dict, fetcher, cache_dir: Path) -> Path:
@@ -67,22 +81,88 @@ def load_ofsted_rows(path: Path) -> list[dict]:
     suffix = path.suffix.lower()
     if suffix == ".csv":
         return read_csv(path)
-    if suffix in (".xlsx", ".ods"):
+    if suffix == ".xlsx":
         try:
-            from openpyxl import load_workbook  # xlsx
+            from openpyxl import load_workbook
         except ImportError:
-            load_workbook = None
-        if suffix == ".xlsx" and load_workbook:
-            wb = load_workbook(path, read_only=True)
-            ws = max(wb.worksheets, key=lambda w: w.max_row)
-            rows = ws.iter_rows(values_only=True)
-            header = [str(h or "") for h in next(rows)]
-            return [dict(zip(header, [str(v or "") for v in r])) for r in rows]
-        raise RuntimeError(
-            f"Cannot parse {path}: install openpyxl (xlsx) or convert the "
-            "file to CSV and point ofsted_data_url at it."
-        )
+            raise RuntimeError(
+                f"Cannot parse {path}: install openpyxl "
+                "(python -m pip install openpyxl) or point ofsted_data_url "
+                "at the CSV version of the release."
+            )
+        wb = load_workbook(path, read_only=True)
+        sheets = [[list(r) for r in ws.iter_rows(values_only=True)]
+                  for ws in wb.worksheets]
+        return _sheets_to_dicts(sheets, path)
+    if suffix == ".ods":
+        return _sheets_to_dicts(_load_ods_sheets(path), path)
     raise RuntimeError(f"Unsupported Ofsted file format: {path}")
+
+
+def _load_ods_sheets(path: Path) -> list[list[list[str]]]:
+    """Read every sheet of an .ods file using only the standard library.
+
+    An .ods is a ZIP whose content.xml holds the tables; streaming with
+    iterparse keeps memory sane on the ~60k-row Ofsted releases.
+    """
+    import xml.etree.ElementTree as ET
+    import zipfile
+
+    T = "{urn:oasis:names:tc:opendocument:xmlns:table:1.0}"
+    O = "{urn:oasis:names:tc:opendocument:xmlns:office:1.0}"
+    sheets: list[list[list[str]]] = []
+    current: list[list[str]] = []
+    with zipfile.ZipFile(path) as z, z.open("content.xml") as f:
+        for _event, elem in ET.iterparse(f, events=("end",)):
+            if elem.tag == T + "table-row":
+                cells: list[str] = []
+                for tc in elem.findall(T + "table-cell"):
+                    repeat = int(tc.get(T + "number-columns-repeated", "1"))
+                    text = " ".join(
+                        "".join(p.itertext()) for p in tc).strip()
+                    if not text:
+                        text = tc.get(O + "value", "")
+                    if not text and repeat > 50:
+                        break  # trailing run of empty cells = end of row
+                    cells.extend([text] * min(repeat, 50))
+                if any(c.strip() for c in cells):
+                    current.append(cells)
+                elem.clear()
+            elif elem.tag == T + "table":
+                sheets.append(current)
+                current = []
+                elem.clear()
+    return sheets
+
+
+def _sheets_to_dicts(sheets: list[list[list]], path: Path) -> list[dict]:
+    """Find the sheet/row holding the real header and build row dicts.
+
+    Ofsted spreadsheet releases put titles and notes above (and around)
+    the data table, so the header is located by content, not position.
+    """
+    best: list[dict] = []
+    for sheet in sheets:
+        header_idx = None
+        for i, row in enumerate(sheet[:30]):
+            if any("provider name" in str(c or "").strip().lower()
+                   for c in row):
+                header_idx = i
+                break
+        if header_idx is None:
+            continue
+        header = [str(c or "").strip() for c in sheet[header_idx]]
+        rows = [dict(zip(header, [str(v or "").strip() for v in r]))
+                for r in sheet[header_idx + 1:]]
+        if len(rows) > len(best):
+            best = rows
+    if not best:
+        raise RuntimeError(
+            f"No sheet with a 'Provider name' header found in {path}; "
+            "the release format may have changed — point ofsted_data_url "
+            "at the CSV version of the file."
+        )
+    return best
 
 
 def _resolve_ofsted_columns(fields: list[str]) -> dict:
