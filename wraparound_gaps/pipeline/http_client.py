@@ -68,8 +68,14 @@ class PoliteFetcher:
         rp = self._robots[host]
         return rp is None or rp.can_fetch(self.ua, url)
 
-    def get(self, url: str, binary: bool = False) -> FetchResult:
-        if not self._robots_allows(url):
+    def get(self, url: str, binary: bool = False,
+            check_robots: bool = True) -> FetchResult:
+        # check_robots=False is reserved for direct downloads of published
+        # open-data files (GIAS/Ofsted): those hosts blanket-disallow
+        # crawlers in robots.txt even though the files are published for
+        # download, and fetching one named file is navigation, not crawling.
+        # The school-website sweep always keeps the robots check.
+        if check_robots and not self._robots_allows(url):
             log.info("robots.txt disallows %s — skipping", url)
             return FetchResult(url, None, error="blocked by robots.txt")
         last_err = ""

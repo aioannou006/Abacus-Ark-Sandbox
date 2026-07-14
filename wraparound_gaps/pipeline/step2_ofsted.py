@@ -54,7 +54,8 @@ def download_ofsted(cfg: dict, fetcher, cache_dir: Path) -> Path:
         log.info("Ofsted dataset already cached: %s", dest)
         return dest
     log.info("downloading Ofsted childcare dataset: %s", url)
-    result = fetcher.get(url, binary=True)
+    # Published open-data download, not a crawl (see step1) — skip robots.
+    result = fetcher.get(url, binary=True, check_robots=False)
     if not result.ok:
         raise RuntimeError(f"Ofsted download failed: {result.error or result.status}")
     dest.write_bytes(result.content)

@@ -108,7 +108,8 @@ def fixture_config(cfg: dict) -> dict:
 class FakeFetcher:
     """URL-keyed stand-in for PoliteFetcher (scheme-insensitive)."""
 
-    def get(self, url: str, binary: bool = False) -> FetchResult:
+    def get(self, url: str, binary: bool = False,
+            check_robots: bool = True) -> FetchResult:
         key = url.split("://", 1)[-1].rstrip("/")
         for prefix in ERROR_PREFIXES:
             if key.startswith(prefix):
