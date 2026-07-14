@@ -103,6 +103,21 @@ class TestOfstedLoader(unittest.TestCase):
         self.assertEqual(_pick_data_url([ods, csv_other]), csv_other)
         self.assertEqual(_pick_data_url([ods]), ods)
 
+    def test_load_csv_with_title_row(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "sample.csv"
+            path.write_text(
+                "Latest inspections of all registered providers as at "
+                "31 December 2025 (published by 31 December 2025),\n"
+                "Provider name,Provider type,Postcode\n"
+                "Riverside After School Club,"
+                "Childcare on non-domestic premises,SW18 2PQ\n",
+                encoding="utf-8")
+            rows = load_ofsted_rows(path)
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["Provider name"],
+                         "Riverside After School Club")
+
     def test_load_ods(self):
         import zipfile
 

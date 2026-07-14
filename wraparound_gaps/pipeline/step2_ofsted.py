@@ -12,7 +12,7 @@ import re
 from pathlib import Path
 
 from .util import (log, name_tokens, norm_postcode, norm_street,
-                   postcode_district, read_csv, resolve_column, write_csv)
+                   postcode_district, resolve_column, write_csv)
 
 MATCH_FIELDS = [
     "urn", "name", "borough", "postcode",
@@ -80,7 +80,13 @@ def load_ofsted_rows(path: Path) -> list[dict]:
     """Load the dataset regardless of csv/xlsx/ods format."""
     suffix = path.suffix.lower()
     if suffix == ".csv":
-        return read_csv(path)
+        # Ofsted CSVs carry a title line above the real header, so run
+        # them through the same header-by-content detection as spreadsheets.
+        import csv
+
+        with open(path, newline="", encoding="utf-8", errors="replace") as f:
+            sheet = list(csv.reader(f))
+        return _sheets_to_dicts([sheet], path)
     if suffix == ".xlsx":
         try:
             from openpyxl import load_workbook
