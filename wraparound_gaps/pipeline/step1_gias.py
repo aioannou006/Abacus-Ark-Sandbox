@@ -25,7 +25,9 @@ def download_gias(cfg: dict, fetcher, cache_dir: Path,
             log.info("GIAS extract already cached: %s", dest)
             return dest, day.isoformat()
         log.info("trying GIAS extract %s", url)
-        result = fetcher.get(url, binary=True)
+        # Published open-data download, not a crawl — the Azure host's
+        # robots.txt disallows everything, so skip that check here.
+        result = fetcher.get(url, binary=True, check_robots=False)
         if result.ok and result.content:
             dest.write_bytes(result.content)
             log.info("downloaded GIAS extract for %s (%d bytes)",
